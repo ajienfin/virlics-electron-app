@@ -19,7 +19,7 @@ function createWindow () {
   mainWindow.webContents.openDevTools()
   let url = process.argv.slice(2, process.argv.length)
   if (url.length > 0) url = url[0]
-  else url = "https://www.google.com"
+  else url = "https://virlicsadmin.firebaseapp.com"
   console.log(url)
   // and load the index.html of the app.
   mainWindow.loadURL(url)

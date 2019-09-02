@@ -1,5 +1,5 @@
 {
-  "name": "electron-quick-start",
+  "name": "SPJAIN-ELO",
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
@@ -26,10 +26,23 @@
     "electron-builder": "^21.2.0"
   },
   "build": {
-    "appId": "videowallapp.321",
+    "appId": "spjainelo2019",
     "linux": {
       "target": "deb",
       "icon": "./elo-log1.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": ".build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./build/icon.ico",
+      "uninstallerIcon": "./build/icon.ico",
+      "installerHeaderIcon": "./build/logo.bmp",
+      "installerSidebar": "./build/banner.bmp",
+      "uninstallerSidebar": "./build/banner.bmp"
     }
   }
 }
