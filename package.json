@@ -1,0 +1,35 @@
+{
+  "name": "electron-quick-start",
+  "version": "1.0.0",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": {
+    "name": "Barney Rubble",
+    "email": "b@rubble.com",
+    "url": "http://barnyrubble.tumblr.com/"
+  },
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "4.2.9",
+    "electron-builder": "^21.2.0"
+  },
+  "build": {
+    "appId": "videowallapp.321",
+    "linux": {
+      "target": "deb",
+      "icon": "./elo-log1.png"
+    }
+  }
+}
