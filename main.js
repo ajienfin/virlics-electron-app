@@ -7,6 +7,7 @@ require('update-electron-app')()
 let mainWindow
 function minimizeWindow() {
   mainWindow.setFullScreen(false);
+  mainWindow.unmaximize()
 }
 function createWindow () {
   // Create the browser window.
@@ -19,7 +20,7 @@ function createWindow () {
     fullscreen:true,
     fullscreenable:true
   })
-  mainWindow.maximize()
+  // mainWindow.maximize()
   // mainWindow.webContents.openDevTools()
   let url = process.argv.slice(2, process.argv.length)
   if (url.length > 0) url = url[0]
@@ -37,11 +38,16 @@ function createWindow () {
     console.log('key is pressed');
     mainWindow.webContents.openDevTools()
   });
-  mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
-    console.log(message + " " + sourceId + " (" + line + ")");
-  });
+  mainWindow.on('maximize', function () {
+    console.log('maximize')
+    mainWindow.setFullScreen(true)
+  })
+  // mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
+  //   console.log(message + " " + sourceId + " (" + line + ")");
+  // });
 }
 app.on('ready', createWindow)
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
