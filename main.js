@@ -26,7 +26,7 @@ function createWindow () {
   if (url.length > 0) url = url[0]
   else url = "https://testingapp.spjain.org/"
 
-  mainWindow.loadURL(url)
+  mainWindow.loadURL(url, { "extraHeaders": "pragma: no-cache\n" })
   mainWindow.on('closed', function () {
     mainWindow = null
   })
