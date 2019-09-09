@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, globalShortcut} = require('electron')
 const path = require('path')
-
+require('update-electron-app')()
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -20,7 +20,7 @@ function createWindow () {
     fullscreenable:true
   })
   mainWindow.maximize()
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   let url = process.argv.slice(2, process.argv.length)
   if (url.length > 0) url = url[0]
   else url = "https://testingapp.spjain.org/"
@@ -29,9 +29,13 @@ function createWindow () {
   mainWindow.on('closed', function () {
     mainWindow = null
   })
-  const ret = globalShortcut.register('Escape', function () {
+  globalShortcut.register('Escape', function () {
     console.log('key is pressed');
     minimizeWindow();
+  });
+  globalShortcut.register('CommandOrControl+Shift+J', function () {
+    console.log('key is pressed');
+    mainWindow.webContents.openDevTools()
   });
   mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
     console.log(message + " " + sourceId + " (" + line + ")");
@@ -41,23 +45,16 @@ app.on('ready', createWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') app.quit()
 })
 
 app.on('activate', function () {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow()
 })
 
 app.on('will-quit', function () {
-  console.log('will-quit')
   globalShortcut.unregister('Escape');
-
+  globalShortcut.unregister('CommandOrControl+Shift+J');
   globalShortcut.unregisterAll();
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
