@@ -47,6 +47,7 @@
     }
   },
   "dependencies": {
+    "electron-positioner": "^4.1.0",
     "update-electron-app": "^1.5.0"
   }
 }

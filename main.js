@@ -1,15 +1,16 @@
-// Modules to control application life and create native browser window
-const { app, BrowserWindow, globalShortcut} = require('electron')
+const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron')
 const path = require('path')
+const Positioner = require('electron-positioner')
 require('update-electron-app')()
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let child
+let url
 function minimizeWindow() {
   mainWindow.setFullScreen(false);
   mainWindow.unmaximize()
 }
-function createWindow () {
+
+function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1080,
@@ -17,12 +18,10 @@ function createWindow () {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     },
-    fullscreen:true,
-    fullscreenable:true
+    fullscreen: true,
+    fullscreenable: true
   })
-  // mainWindow.maximize()
-  // mainWindow.webContents.openDevTools()
-  let url = process.argv.slice(2, process.argv.length)
+  url = process.argv.slice(2, process.argv.length)
   if (url.length > 0) url = url[0]
   else url = "https://testingapp.spjain.org/"
 
@@ -31,7 +30,6 @@ function createWindow () {
     mainWindow = null
   })
   globalShortcut.register('Escape', function () {
-    console.log('key is pressed');
     minimizeWindow();
   });
   globalShortcut.register('CommandOrControl+Shift+J', function () {
@@ -42,9 +40,7 @@ function createWindow () {
     console.log('maximize')
     mainWindow.setFullScreen(true)
   })
-  // mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
-  //   console.log(message + " " + sourceId + " (" + line + ")");
-  // });
+  subscribeRenderEvents()
 }
 app.on('ready', createWindow)
 
@@ -63,4 +59,46 @@ app.on('will-quit', function () {
   globalShortcut.unregister('CommandOrControl+Shift+J');
   globalShortcut.unregisterAll();
 });
+function subscribeRenderEvents() {
+  ipcMain.on('close-screenshare-window', function () {
+    child.close()
+    child = null
+    mainWindow.webContents.send('screenshare-stoped-from-ec')
+
+  })
+  ipcMain.on('close-screen-share-window', function () {
+    if (child == null) return
+    child.close()
+    child = null
+  })
+  ipcMain.on('screen-share-window', function () {
+    let screen = require('electron').screen
+    let url = new URL(mainWindow.webContents.getURL())
+    let displays = screen.getAllDisplays();
+    let height = 0;
+    let width = 0;
+    for (var i in displays) {
+      height += displays[i].bounds.height;
+      width += displays[i].bounds.width;
+    }
+    child = new BrowserWindow({
+      // parent: mainWindow,
+      width: 420,
+      height: 40,
+      frame: false,
+      resizable: false,
+      transparent: true,
+      x: (width / 2 ) - 200,
+      y: height - 50
+    })
+    child.loadFile(path.join(__dirname, 'src/screen-share-window/app.html'))
+    child.once('ready-to-show', () => {
+      child.show()
+    })
+    child.on('closed', () => {
+      child = null
+      mainWindow.webContents.send('screenshare-stoped-from-ec')
+    })
+  })
+}
 

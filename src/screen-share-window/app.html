@@ -1,0 +1,64 @@
+<html>
+
+<head>
+  <title>ELO</title>
+  <style>
+    html,
+    body {
+      margin: 0px;
+      padding: 0px;
+      overflow: hidden;
+    }
+
+    div.screen-close-window {
+      height: 28px;
+      background: #dedbdbbf;
+      font-size: 15px;
+      padding: 4px 15px;
+      -webkit-app-region: drag;
+      border: 0.2px solid #bdbbbb;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-family: sans-serif;
+    }
+
+    p {
+      -webkit-app-region: drag;
+      margin: 0px;
+    }
+
+    button {
+      border: none;
+      background: #ff572285;
+      color: #fff;
+      font-weight: 550;
+      border-radius: 4px;
+      font-size: 14px;
+      /* text-transform: capitalize; */
+      padding: 5px 13px;
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen-close-window">
+    <p>ELO Application is sharing your screen. <button id="stop-btn">Stop sharing</button></p>
+  </div>
+  <script>
+    const electron = require('electron')
+    const ipcRenderer = electron.ipcRenderer
+    const btn = document.getElementById("stop-btn")
+    btn.addEventListener('click', (ev) => {
+      ipcRenderer.send('close-screenshare-window')
+    })
+
+    // ipcRenderer.on('message', (event, data) => {
+    //   showMessage(data.msg, data.hide, data.replaceAll)
+    // })
+  </script>
+</body>
+
+</html>
