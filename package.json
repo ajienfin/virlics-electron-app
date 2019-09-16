@@ -1,11 +1,14 @@
 {
   "name": "spjainelo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The new technology by SP Jain – Engaged Learning Online (ELO) – uses a blend of some of today’s most cutting-edge emerging technologies to bring the dynamism and engagement of the SP Jain classroom online and in real time. Our students could be in any part of the world – at home, work, a café or even an airport – by simply logging in to ELO, they get all the benefits of an on-campus education. They can interact with world-class faculty, share ideas with their peers, collaborate on assignments, break out into teams to discuss and debate – all in real time and without any loss of engagement.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "build": "npm run build --win",
+    "ship": "electron-builder --deb -p always",
+    "ship-linux": "electron-builder --linux -p always --config=electron-builder.yml"
   },
   "repository": "https://github.com/ajienfin/virlics-electron-app",
   "keywords": [
@@ -30,11 +33,18 @@
     "linux": {
       "target": "deb",
       "category": "education",
-      "icon": "./build/256x256.png"
+      "icon": "./build/256x256.png",
+      "publish": [
+        "github",
+        "bintray"
+      ]
     },
     "win": {
       "target": "nsis",
-      "icon": ".build/icon.ico"
+      "icon": ".build/icon.ico",
+      "publish": [
+        "github"
+      ]
     },
     "nsis": {
       "oneClick": false,
@@ -48,6 +58,7 @@
   },
   "dependencies": {
     "electron-positioner": "^4.1.0",
+    "electron-updater": "^4.1.2",
     "update-electron-app": "^1.5.0"
   }
 }
