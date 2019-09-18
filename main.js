@@ -1,7 +1,8 @@
 const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron')
 const path = require('path')
-const Positioner = require('electron-positioner')
-require('update-electron-app')()
+const { autoUpdater } = require("electron-updater")
+const electronLocalshortcut = require('electron-localshortcut');
+
 let mainWindow
 let child
 let url
@@ -9,6 +10,7 @@ function minimizeWindow() {
   mainWindow.setFullScreen(false);
   mainWindow.unmaximize()
 }
+autoUpdater.checkForUpdatesAndNotify()
 
 function createWindow() {
   // Create the browser window.
@@ -16,7 +18,9 @@ function createWindow() {
     width: 1080,
     height: 720,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      backgroundThrottling: false
     },
     fullscreen: true,
     fullscreenable: true
@@ -29,18 +33,20 @@ function createWindow() {
   mainWindow.on('closed', function () {
     mainWindow = null
   })
-  globalShortcut.register('Escape', function () {
-    minimizeWindow();
-  });
-  globalShortcut.register('CommandOrControl+Shift+J', function () {
-    console.log('key is pressed');
-    mainWindow.webContents.openDevTools()
-  });
   mainWindow.on('maximize', function () {
     console.log('maximize')
-    mainWindow.setFullScreen(true)
+    if (child == null) mainWindow.setFullScreen(true)
   })
   subscribeRenderEvents()
+  electronLocalshortcut.register(mainWindow, 'Escape', ()=>{
+    minimizeWindow()
+  })
+  electronLocalshortcut.register(mainWindow, 'F5', ()=>{
+    mainWindow.webContents.reload()
+  })
+  electronLocalshortcut.register(mainWindow, 'CommandOrControl+Shift+J', ()=>{
+    mainWindow.webContents.openDevTools()
+  })
 }
 app.on('ready', createWindow)
 
@@ -55,16 +61,18 @@ app.on('activate', function () {
 })
 
 app.on('will-quit', function () {
-  globalShortcut.unregister('Escape');
-  globalShortcut.unregister('CommandOrControl+Shift+J');
-  globalShortcut.unregisterAll();
+  electronLocalshortcut.unregister(mainWindow, 'Escape');
+  electronLocalshortcut.unregister(mainWindow, 'CommandOrControl+Shift+J');
+  electronLocalshortcut.unregisterAll(mainWindow, 'F5');
+  electronLocalshortcut.unregisterAll(mainWindow);
 });
 function subscribeRenderEvents() {
   ipcMain.on('close-screenshare-window', function () {
+    console.log('close-screenshare-window')
     child.close()
     child = null
+    mainWindow.focus()
     mainWindow.webContents.send('screenshare-stoped-from-ec')
-
   })
   ipcMain.on('close-screen-share-window', function () {
     if (child == null) return
@@ -81,15 +89,23 @@ function subscribeRenderEvents() {
       height += displays[i].bounds.height;
       width += displays[i].bounds.width;
     }
+    mainWindow.setFullScreen(false);
+    mainWindow.maximize()
+    mainWindow.blur()
     child = new BrowserWindow({
       // parent: mainWindow,
       width: 420,
       height: 40,
+      // height: 400,
       frame: false,
       resizable: false,
       transparent: true,
       x: (width / 2 ) - 200,
-      y: height - 50
+      y: height - 50,
+      webPreferences: {
+        nodeIntegration: true,
+        backgroundThrottling: false
+      }
     })
     child.loadFile(path.join(__dirname, 'src/screen-share-window/app.html'))
     child.once('ready-to-show', () => {
@@ -99,6 +115,8 @@ function subscribeRenderEvents() {
       child = null
       mainWindow.webContents.send('screenshare-stoped-from-ec')
     })
+   
+    // child.focus()
   })
 }
 

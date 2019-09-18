@@ -44,21 +44,26 @@
 </head>
 
 <body>
-  <div class="screen-close-window">
-    <p>ELO Application is sharing your screen. <button id="stop-btn">Stop sharing</button></p>
-  </div>
+ 
   <script>
     const electron = require('electron')
     const ipcRenderer = electron.ipcRenderer
     const btn = document.getElementById("stop-btn")
-    btn.addEventListener('click', (ev) => {
+    // btn.addEventListener('click', (ev) => {
+    //   console.log(' iam clicked')
+    //   ipcRenderer.send('close-screenshare-window')
+    // })
+    function _click(){
       ipcRenderer.send('close-screenshare-window')
-    })
-
+    }
+    console.log()
     // ipcRenderer.on('message', (event, data) => {
     //   showMessage(data.msg, data.hide, data.replaceAll)
     // })
   </script>
+  <div class="screen-close-window">
+    <p>ELO Application is sharing your screen. <button id="stop-btn" onclick="_click()">Stop sharing</button></p>
+  </div>
 </body>
 
 </html>
