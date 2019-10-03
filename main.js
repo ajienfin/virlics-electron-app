@@ -138,10 +138,6 @@ function subscribeRenderEvents() {
   ipcMain.on('moderator-enter-to-splitroom', function (msg, store) {
     console.log(store)
     if (moderatorWindow != undefined) {
-      // electronLocalshortcut.unregister(moderatorWindow, 'Escape');
-      electronLocalshortcut.unregister(moderatorWindow, 'CommandOrControl+Shift+J');
-      electronLocalshortcut.unregisterAll(moderatorWindow, 'F5');
-      electronLocalshortcut.unregisterAll(moderatorWindow);
       moderatorWindow.close()
       moderatorWindow = null
     }
@@ -171,12 +167,7 @@ function subscribeRenderEvents() {
     })
     moderatorWindow.on('closed', () => {
       moderatorWindow = null
-      mainWindow.webContents.send('moderator-enter-to-splitroom-ended')
-    })
-
-
-    electronLocalshortcut.register(moderatorWindow, 'Escape', () => {
-      // minimizeWindow()
+      if (mainWindow != null)  mainWindow.webContents.send('moderator-enter-to-splitroom-ended')
     })
     electronLocalshortcut.register(moderatorWindow, 'F5', () => {
       mainWindow.webContents.reload()
