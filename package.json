@@ -7,7 +7,8 @@
     "start": "electron .",
     "dist": "electron-builder",
     "build": "npm run build --win",
-    "ship": "electron-builder  -p always"
+    "ship": "electron-builder -p always",
+    "win-server": ".\\node_modules\\electron\\dist\\electron.exe ."
   },
   "repository": "https://github.com/ajienfin/virlics-electron-app",
   "keywords": [
